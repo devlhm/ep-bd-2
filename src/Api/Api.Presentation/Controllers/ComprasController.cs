@@ -48,5 +48,16 @@ namespace Api.Presentation.Controllers
                 return StatusCode(500, new { message = "Ocorreu um erro interno ao processar a compra." });
             }
         }
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var compra = await _compraService.GetByIdAsync(id);
+            if (compra == null)
+            {
+                return NotFound(new { message = $"Compra com ID {id} não encontrada." });
+            }
+            return Ok(compra);
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace Api.Application
             // Antes de salvar, a senha deve ser transformada em um hash seguro.
             // Bibliotecas como BCrypt.Net ou a criptografia nativa do .NET são usadas para isso.
             // Exemplo: funcionario.Senha = BCrypt.Net.BCrypt.HashPassword(funcionario.Senha);
-            funcionario.Senha = HashPassword(funcionario.Senha); // Placeholder para a lógica de hash
+            funcionario.Senha = BCrypt.Net.BCrypt.HashPassword(funcionario.Senha); // Placeholder para a lógica de hash
 
             await _funcionarioRepository.CreateAsync(funcionario);
         }
@@ -56,11 +56,14 @@ namespace Api.Application
             return await _funcionarioRepository.GetByCpfAsync(cpf);
         }
         
-        // Método privado apenas para simular o hashing
-        private string HashPassword(string password)
+        public async Task<bool> DeleteAsync(string cpf)
         {
-            // LÓGICA DE HASHING REAL IRIA AQUI
-            return $"HASHED_{password}"; 
+            var existing = await _funcionarioRepository.GetByCpfAsync(cpf);
+            if (existing == null)
+            {
+                throw new KeyNotFoundException("Funcionário não encontrado.");
+            }
+            return await _funcionarioRepository.DeleteAsync(cpf);
         }
     }
 }

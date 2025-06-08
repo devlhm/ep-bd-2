@@ -33,5 +33,12 @@ namespace Api.Application.Interface.Repository
         /// Remove um funcionário.
         /// </summary>
         Task<bool> DeleteAsync(string cpf);
+        
+        // ... (métodos existentes)
+
+        /// <summary>
+        /// Calcula o valor total de despesa mensal com salários.
+        /// </summary>
+        Task<decimal> GetTotalMonthlySalaryExpenseAsync();
     }
 }

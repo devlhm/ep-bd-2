@@ -10,5 +10,6 @@ namespace Api.Application.Interface.Service
         Task<Funcionario?> GetByCpfAsync(string cpf);
         Task<IEnumerable<Funcionario>> GetAllAsync();
         Task<bool> UpdateAsync(Funcionario funcionario);
+        Task<bool> DeleteAsync(string cpf);
     }
 }

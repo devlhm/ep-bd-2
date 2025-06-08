@@ -114,5 +114,11 @@ namespace Api.Infra.Repository
                 throw;
             }
         }
+        
+        public async Task<decimal> GetTotalMonthlySalaryExpenseAsync()
+        {
+            var sql = "SELECT COALESCE(SUM(salario), 0) FROM funcionario;";
+            return await _connection.ExecuteScalarAsync<decimal>(sql);
+        }
     }
 }

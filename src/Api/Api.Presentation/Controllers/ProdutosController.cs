@@ -90,5 +90,18 @@ namespace Api.Presentation.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        
+        // DELETE: api/produtos/5
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Gerente,Repositor")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _produtoService.DeleteAsync(id);
+            if (!success)
+            {
+                return NotFound(new { message = $"Produto com ID {id} não encontrado." });
+            }
+            return NoContent();
+        }
     }
 }

@@ -67,5 +67,56 @@ namespace Api.Presentation.Controllers
                 return StatusCode(500, new { message = "Ocorreu um erro ao criar o funcionário."});
             }
         }
+        
+        // GET: api/funcionarios/11111111111
+        [HttpGet("{cpf}")]
+        public async Task<IActionResult> GetByCpf(string cpf)
+        {
+            var funcionario = await _funcionarioService.GetByCpfAsync(cpf);
+            if (funcionario == null)
+            {
+                return NotFound();
+            }
+            
+            var response = new FuncionarioResponseDto(
+                funcionario.Cpf, funcionario.Nome, funcionario.Email, 
+                funcionario.Salario, funcionario.IdCargo
+            );
+            return Ok(response);
+        }
+
+        // PUT: api/funcionarios/11111111111
+        [HttpPut("{cpf}")]
+        public async Task<IActionResult> Update(string cpf, [FromBody] Funcionario funcionario)
+        {
+            if (cpf != funcionario.Cpf)
+            {
+                return BadRequest("O CPF na URL deve ser o mesmo do corpo da requisição.");
+            }
+            try
+            {
+                await _funcionarioService.UpdateAsync(funcionario);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        // DELETE: api/funcionarios/11111111111
+        [HttpDelete("{cpf}")]
+        public async Task<IActionResult> Delete(string cpf)
+        {
+            try
+            {
+                await _funcionarioService.DeleteAsync(cpf);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }

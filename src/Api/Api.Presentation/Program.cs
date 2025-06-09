@@ -81,9 +81,6 @@ using (IServiceScope scope = app.Services.CreateScope())
 
 // 6. Configurar o pipeline de requisições HTTP
 
-// Adicionar um middleware de tratamento de exceções global
-app.UseExceptionHandler("/error"); 
-
 app.UseHttpsRedirection();
 
 // Ativar a autenticação e autorização

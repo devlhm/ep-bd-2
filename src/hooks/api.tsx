@@ -1,5 +1,6 @@
 import { Client } from '../@types/Cliente';
 import { Funcionario } from '../@types/Funcionario';
+import { Produto } from '../@types/Produto';
 import apiClient from '../Api/front/api'
 
 export const Api = {
@@ -38,6 +39,15 @@ export const Api = {
             return response.data;
         } catch (error) {
             console.error('Erro ao buscar funcionários:', error);
+            throw error;
+        }
+    },
+    fetchProducts: async (): Promise<Produto[]> => {
+        try {
+            const response = await apiClient.get('/produtos');
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao buscar produtos:', error);
             throw error;
         }
     }

@@ -28,18 +28,18 @@ export function formatCurrency(value: number): string {
 }
 
 export const getProcedureNames: () => string[] = () => [
-        'Limpeza de Pele',
-        'Peeling',
-        'Drenagem Linfática',
-        'Radiofrequência',
-        'Peeling Químico',
-        'Microagulhamento',
-        'Lifting Facial',
-        'Laser Fracionado',
-        'Hidratação Facial'
-    ];
+    'Limpeza de Pele',
+    'Peeling',
+    'Drenagem Linfática',
+    'Radiofrequência',
+    'Peeling Químico',
+    'Microagulhamento',
+    'Lifting Facial',
+    'Laser Fracionado',
+    'Hidratação Facial'
+];
 
-export const getProductTypes: () => string[] = () => 
+export const getProductTypes: () => string[] = () =>
     [
         'Cosmético',
         'Capilar',
@@ -47,16 +47,16 @@ export const getProductTypes: () => string[] = () =>
     ];
 
 export const getFunctionalities: () => string[] = () => ['Limpeza',
-        'Nutrição',
-        'Brilho',
-        'Proteção UV',
-        'Hidratação',
-        'Rejuvenescimento',
-        'Relaxamento',
-        'Anti-idade',
-        'Purificação',
-        'Aromaterapia',
-        'Tratamento'];
+    'Nutrição',
+    'Brilho',
+    'Proteção UV',
+    'Hidratação',
+    'Rejuvenescimento',
+    'Relaxamento',
+    'Anti-idade',
+    'Purificação',
+    'Aromaterapia',
+    'Tratamento'];
 
 export const getProfessionalTypes: () => string[] = () => ['Dermatologista', 'Esteticista'];
 

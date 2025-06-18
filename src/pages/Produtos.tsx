@@ -5,7 +5,7 @@ import { Column, ColumnFilterElementTemplateOptions } from 'primereact/column';
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/lara-light-pink/theme.css";
 import "primereact/resources/primereact.min.css";
-import { formatCurrency, getProductTypes, getFunctionalities, removeDotDash } from '../Helpers';
+import { formatCurrency, removeDotDash } from '../Helpers';
 import { InputText } from 'primereact/inputtext';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
@@ -20,16 +20,17 @@ import ErrorMessage from '../components/ErrorMessage';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import Sidebar from '../components/Sidebar/Sidebar';
 import { Produto } from '../@types/Produto';
+import { Api } from '../hooks/api';
 
 const Produtos: React.FC = () => {
     let emptyProduct: Produto = {
-        id_produto: 0,
+        idProduto: 0,
         nome: "",
-        quantidade_em_estoque: 0,
+        quantidadeEmEstoque: 0,
         prateleira: "",
         corredor: "",
         validade: new Date(),
-        valor_unitario: 0
+        valorUnitario: 0
     };
 
     const [products, setProducts] = useState<Produto[]>([]);
@@ -63,14 +64,14 @@ const Produtos: React.FC = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get<Produto[]>('http://localhost:5155/product');
+            const response = await Api.fetchProducts();
 
-            // const mapped = response.data.map((product) => {
-            //     product.status = getStatus(product.quantidade_em_estoque);
-            //     return product;
-            // });
+            const mapped = response.map((product) => {
+                product.status = getStatus(product.quantidadeEmEstoque);
+                return product;
+            });
 
-            // setProducts(mapped);
+            setProducts(mapped);
         } catch (error) {
             console.log(error);
             if (axios.isAxiosError(error) && error.response) {
@@ -89,7 +90,7 @@ const Produtos: React.FC = () => {
         if (sell.cpf.trim()) {
             try {
                 await axios.post(`http://localhost:5155/product/sell`, {
-                    productId: product.id_produto,
+                    productId: product.idProduto,
                     quantity: sell.quantity,
                     cpf: sell.cpf
                 });
@@ -156,8 +157,8 @@ const Produtos: React.FC = () => {
                 />
                 <Button
                     icon="pi pi-shopping-cart"
-                    className={classNames('p-button-rounded p-button-info ml-2 bg-blue-500 text-white', { 'p-disabled': rowData.quantidade_em_estoque === 0 })}
-                    disabled={rowData.quantidade_em_estoque === 0}
+                    className={classNames('p-button-rounded p-button-info ml-2 bg-blue-500 text-white', { 'p-disabled': rowData.quantidadeEmEstoque === 0 })}
+                    disabled={rowData.quantidadeEmEstoque === 0}
                     onClick={() => {
                         setSubmitted(false);
                         setSell({ quantity: 1, cpf: '' });
@@ -175,7 +176,7 @@ const Produtos: React.FC = () => {
         var reqBody = { ...product };
 
         if (product!.nome.trim()) {
-            if (product.id_produto) {
+            if (product.idProduto) {
                 try {
                     await axios.put(`http://localhost:5155/product/`, reqBody);
                 } catch (error: any) {
@@ -283,8 +284,8 @@ const Produtos: React.FC = () => {
     const onInputNumberChangeSell = (e: any, name: string) => {
         let val = e.value || 0;
 
-        if (name === 'quantity' && val > product.quantidade_em_estoque)
-            val = product.quantidade_em_estoque;
+        if (name === 'quantity' && val > product.quantidadeEmEstoque)
+            val = product.quantidadeEmEstoque;
 
         let _product: any = { ...sell };
         _product[`${name}`] = val;
@@ -293,11 +294,11 @@ const Produtos: React.FC = () => {
     };
 
     const deleteProduct = (product: Produto) => {
-        setProducts(products.filter((val) => val.id_produto !== product.id_produto));
+        setProducts(products.filter((val) => val.idProduto !== product.idProduto));
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
         try {
-            axios.delete(`http://localhost:5155/product/${product.id_produto}`);
+            axios.delete(`http://localhost:5155/product/${product.idProduto}`);
         } catch (error: any) {
             throw new Error(error.message)
         } finally {
@@ -311,15 +312,19 @@ const Produtos: React.FC = () => {
     }
 
     const valorUnitarioBodyTemplate = (rowData: Produto) => {
-        return formatCurrency(rowData.valor_unitario);
+        return formatCurrency(rowData.valorUnitario);
+    }
+
+    const qtdBodyTemplate = (rowData: Produto) => {
+        return rowData.quantidadeEmEstoque;
     }
 
     const statusBodyTemplate = (rowData: Produto) => {
         return (
             <span className={classNames('p-tag p-tag-rounded',
-                { 'bg-red-500': (rowData.quantidade_em_estoque == 0) },
-                { 'bg-yellow-500': (rowData.quantidade_em_estoque > 0 && rowData.quantidade_em_estoque < 10) })}>
-                {/* {rowData.status} */}
+                { 'bg-red-500': (rowData.quantidadeEmEstoque == 0) },
+                { 'bg-yellow-500': (rowData.quantidadeEmEstoque > 0 && rowData.quantidadeEmEstoque < 10) })}>
+                {rowData.status}
             </span>
         );
     }
@@ -343,13 +348,9 @@ const Produtos: React.FC = () => {
                 <Toast ref={toast} />
                 <DataTable sortField='data' className='w-full h-full' sortOrder={-1} dataKey='id' scrollable scrollHeight='100vh' filterDisplay='menu' filters={filters} value={products}>
                     <Column filter sortable field='nome' header='Nome' />
-                    <Column filter sortable field='marca' header='Marca' />
-                    <Column filter sortable field='funcionalidade' header='Funcionalidade' />
-                    <Column filter sortable field='tipo' header='Tipo' />
                     <Column sortable field='valorUnitario' body={valorUnitarioBodyTemplate} header='Valor Unitário' />
-                    <Column filter sortable field='idFornecedor' header='ID do Forn.' />
                     <Column filter sortable field='status' body={statusBodyTemplate} filterElement={statusFilterTemplate} header='Status do Estoque' />
-                    <Column filter sortable field='quantidade' header='Qtd' />
+                    <Column filter sortable field='quantidade' body={qtdBodyTemplate} header='Qtd' />
                     <Column body={actionBodyTemplate} header="Ações" />
                 </DataTable>
 
@@ -389,12 +390,12 @@ const Produtos: React.FC = () => {
                             <label htmlFor="valorUnitario">Valor Unitário</label>
                             <InputNumber
                                 id="valorUnitario"
-                                value={product!.valor_unitario}
+                                value={product!.valorUnitario}
                                 onChange={(e) => onInputNumberChange(e, "valorUnitario")}
                                 required
-                                className={classNames({ "p-invalid": submitted && !product!.valor_unitario }, 'p-3 border-2 rounded-lg')}
+                                className={classNames({ "p-invalid": submitted && !product!.valorUnitario }, 'p-3 border-2 rounded-lg')}
                             />
-                            {submitted && !product!.valor_unitario && (
+                            {submitted && !product!.valorUnitario && (
                                 <small className="p-error">Preencha o valor unitário.</small>
                             )}
                         </div>
@@ -402,12 +403,12 @@ const Produtos: React.FC = () => {
                             <label htmlFor="hora">Quantidade</label>
                             <InputNumber
                                 id="quantidade"
-                                value={product!.quantidade_em_estoque}
+                                value={product!.quantidadeEmEstoque}
                                 onChange={(e) => onInputNumberChange(e, "quantidade")}
                                 required
-                                className={classNames({ "p-invalid": submitted && !product!.quantidade_em_estoque }, 'p-3 border-2 rounded-lg')}
+                                className={classNames({ "p-invalid": submitted && !product!.quantidadeEmEstoque }, 'p-3 border-2 rounded-lg')}
                             />
-                            {submitted && !product!.quantidade_em_estoque && (
+                            {submitted && !product!.quantidadeEmEstoque && (
                                 <small className="p-error">Preencha a quantidade.</small>
                             )}
                         </div>
@@ -431,7 +432,7 @@ const Produtos: React.FC = () => {
                     )}
 
                     <label htmlFor='quantity' className='mt-3 block'>Quantidade</label>
-                    <InputNumber max={product.quantidade_em_estoque} required value={sell.quantity} onChange={(e) => onInputNumberChangeSell(e, "quantity")} id="quantity" className="p-3 border-2 rounded-lg" />
+                    <InputNumber max={product.quantidadeEmEstoque} required value={sell.quantity} onChange={(e) => onInputNumberChangeSell(e, "quantity")} id="quantity" className="p-3 border-2 rounded-lg" />
                     {submitted && !sell.quantity && (
                         <small className="p-error">Preencha a quantidade.</small>
                     )}

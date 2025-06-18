@@ -1,9 +1,10 @@
 export interface Produto {
-    id_produto: number;
+    idProduto: number;
     nome: string;
-    quantidade_em_estoque: number;
+    quantidadeEmEstoque: number;
     prateleira: string;
     corredor: string;
     validade: Date;
-    valor_unitario: number;
+    valorUnitario: number;
+    status?: string;
 }

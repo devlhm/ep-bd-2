@@ -4,7 +4,7 @@ export const Api = {
     login: async (cpf: string, senha: string) => {
         console.log('Tentando fazer login com CPF:', cpf, 'e senha:', senha);
         try {
-            const response = await apiClient.post('/login', {
+            const response = await apiClient.post('/auth/login', {
                 cpf,
                 senha,
             })

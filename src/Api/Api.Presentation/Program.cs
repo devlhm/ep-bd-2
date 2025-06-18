@@ -15,6 +15,18 @@ using Api.Presentation.Handlers;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+// Define a CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 // 1. Configurar serviços do ASP.NET Core
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -33,7 +45,7 @@ builder.Services.AddAuthentication(options =>
 .AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
+    options.SaveToken = true;   
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
@@ -82,6 +94,9 @@ using (IServiceScope scope = app.Services.CreateScope())
 // 6. Configurar o pipeline de requisições HTTP
 
 app.UseHttpsRedirection();
+
+// Apply the CORS policy
+app.UseCors("AllowAllOrigins");
 
 // Ativar a autenticação e autorização
 app.UseAuthentication();

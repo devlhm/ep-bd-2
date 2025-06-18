@@ -6,7 +6,6 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import Home from './pages/Home.tsx';
 import Sidebar from './components/Sidebar/Sidebar.tsx';
 import App from './App.tsx';
 import Procedures from './pages/Procedures.tsx';
@@ -15,6 +14,7 @@ import Products from './pages/Products.tsx';
 import Suppliers from './pages/Suppliers.tsx';
 import Professionals from './pages/Professionals.tsx';
 import Billing from './pages/Billing.tsx';
+import Login from './pages/Login.tsx';
 
 const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <Login />,
       },
       {
         path: '/procedures',
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
       }
     ],
   },
-]); 
+]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,3 +1,4 @@
+import { Client } from '../@types/Client';
 import apiClient from '../Api/front/api'
 
 export const Api = {
@@ -21,4 +22,13 @@ export const Api = {
             throw error;
         }
     },
+    fetchClients: async (): Promise<Client[]> => {
+        try {
+            const response = await apiClient.get('/clients');
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao buscar clientes:', error);
+            throw error;
+        }
+    }
 };

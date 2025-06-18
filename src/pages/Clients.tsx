@@ -23,13 +23,10 @@ import ErrorMessage from '../components/ErrorMessage';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import { InputText } from 'primereact/inputtext';
 import InvoicesView from '../components/InvoicesView';
+import Sidebar from '../components/Sidebar/Sidebar';
+import { Api } from '../hooks/api';
+import { Client } from '../@types/Client';
 
-export interface Client {
-    cpf: string,
-    rg: string,
-    nome: string,
-    dataNascimento: string | Date | null
-}
 
 const Clients: React.FC = () => {
     let emptyClient: Client = {
@@ -60,9 +57,9 @@ const Clients: React.FC = () => {
 
     const fetchClients = async () => {
         try {
-            const response = await axios.get<Client[]>('http://localhost:5155/client');
+            const response = await Api.fetchClients();
 
-            const mapped = response.data.map((client) => {
+            const mapped = response.map((client) => {
                 client.dataNascimento = moment(client.dataNascimento).toDate();
 
                 return client;
@@ -271,83 +268,86 @@ const Clients: React.FC = () => {
     }
 
     return (
-        <div className='flex flex-col self-center justify-self-center w-full h-full bg-white'>
-            <Toast ref={toast} />
-            <DataTable sortField='data' className='w-full h-full' sortOrder={-1} dataKey='cpf' scrollable scrollHeight='100vh' filterDisplay='menu' filters={filters} value={clients}>
-                <Column filter sortable field='nome' header='Nome' />
-                <Column filter sortable field='cpf' body={cpfBodyTemplate} header='CPF' />
-                <Column filter sortable field='rg' body={rgBodyTemplate} header='RG' />
-                <Column filter sortable field='dataNascimento' dataType="date" body={dateBodyTemplate} filterElement={dateFilterTemplate}
-                    header='Data de Nasc.' />
-                <Column body={actionBodyTemplate} header="Ações" />
-            </DataTable>
+        <div className='w-full h-full grid justify-center' style={{ gridTemplateColumns: "250px 1fr" }}>
+            <Sidebar />
 
-            <DeleteConfirmationDialog 
-                visible={deleteClientDialog}
-                onHide={() => setDeleteClientDialog(false)}
-                onConfirm={() => deleteClient(client!)}
-                confirmationMessage="Você tem certeza que quer apagar esse cliente?"
-            />
+            <div className='flex flex-col self-center justify-self-center w-full h-full bg-white'>
+                <Toast ref={toast} />
+                <DataTable sortField='data' className='w-full h-full' sortOrder={-1} dataKey='cpf' scrollable scrollHeight='100vh' filterDisplay='menu' filters={filters} value={clients}>
+                    <Column filter sortable field='nome' header='Nome' />
+                    <Column filter sortable field='cpf' body={cpfBodyTemplate} header='CPF' />
+                    <Column filter sortable field='rg' body={rgBodyTemplate} header='RG' />
+                    <Column filter sortable field='dataNascimento' dataType="date" body={dateBodyTemplate} filterElement={dateFilterTemplate}
+                        header='Data de Nasc.' />
+                    <Column body={actionBodyTemplate} header="Ações" />
+                </DataTable>
 
-            <Dialog
-                visible={clientDialog}
-                style={{ width: "450px" }}
-                header="Detalhes do cliente"
-                modal
-                className="p-fluid"
-                footer={clientDialogFooter}
-                onHide={() => {
-                    setUpdate(false);
-                    setClientDialog(false); 
-                }}
-            >
-                <div className="field mb-3">
-                    <label htmlFor="nome">Nome</label>
-                    <InputText
-                        id="nome"
-                        value={client!.nome}
-                        onChange={(e) => onInputChange(e, "nome")}
-                        required
-                        className={classNames({ "p-invalid": submitted && !client!.nome }, 'p-3 border-2 rounded-lg')}
-                    />
-                    {submitted && !client!.nome && (
-                        <small className="p-error">Preencha o nome.</small>
-                    )}
-                </div>
-                <div className="grid grid-cols-5 gap-x-2">
-                    <div className="field mb-3 col-span-3">
-                        <label htmlFor="cpf">CPF</label>
-                        <InputMask
-                            id="cpf"
-                            value={client!.cpf}
-                            disabled={update}
-                            onChange={(e) => onInputChange(e, "cpf")}
+                <DeleteConfirmationDialog
+                    visible={deleteClientDialog}
+                    onHide={() => setDeleteClientDialog(false)}
+                    onConfirm={() => deleteClient(client!)}
+                    confirmationMessage="Você tem certeza que quer apagar esse cliente?"
+                />
+
+                <Dialog
+                    visible={clientDialog}
+                    style={{ width: "450px" }}
+                    header="Detalhes do cliente"
+                    modal
+                    className="p-fluid"
+                    footer={clientDialogFooter}
+                    onHide={() => {
+                        setUpdate(false);
+                        setClientDialog(false);
+                    }}
+                >
+                    <div className="field mb-3">
+                        <label htmlFor="nome">Nome</label>
+                        <InputText
+                            id="nome"
+                            value={client!.nome}
+                            onChange={(e) => onInputChange(e, "nome")}
                             required
-                            mask='999.999.999-99'
-                            className={classNames({ "p-invalid": submitted && !client!.cpf }, 'p-3 border-2 rounded-lg')}
+                            className={classNames({ "p-invalid": submitted && !client!.nome }, 'p-3 border-2 rounded-lg')}
                         />
-                        {submitted && !client!.cpf && (
-                            <small className="p-error">Preencha o CPF.</small>
+                        {submitted && !client!.nome && (
+                            <small className="p-error">Preencha o nome.</small>
                         )}
                     </div>
-                    <div className="field mb-3 col-span-2">
-                        <label htmlFor="rg">RG</label>
-                        <InputMask
-                            id="rg"
-                            value={client!.rg}
-                            onChange={(e) => onInputNumberChange(e, "rg")}
-                            required
-                            mask='99.999.999-*'
-                            className={classNames({ "p-invalid": submitted && !client!.rg }, 'p-3 border-2 rounded-lg')}
-                        />
-                        {submitted && !client!.rg && (
-                            <small className="p-error">Preencha o RG.</small>
-                        )}
+                    <div className="grid grid-cols-5 gap-x-2">
+                        <div className="field mb-3 col-span-3">
+                            <label htmlFor="cpf">CPF</label>
+                            <InputMask
+                                id="cpf"
+                                value={client!.cpf}
+                                disabled={update}
+                                onChange={(e) => onInputChange(e, "cpf")}
+                                required
+                                mask='999.999.999-99'
+                                className={classNames({ "p-invalid": submitted && !client!.cpf }, 'p-3 border-2 rounded-lg')}
+                            />
+                            {submitted && !client!.cpf && (
+                                <small className="p-error">Preencha o CPF.</small>
+                            )}
+                        </div>
+                        <div className="field mb-3 col-span-2">
+                            <label htmlFor="rg">RG</label>
+                            <InputMask
+                                id="rg"
+                                value={client!.rg}
+                                onChange={(e) => onInputNumberChange(e, "rg")}
+                                required
+                                mask='99.999.999-*'
+                                className={classNames({ "p-invalid": submitted && !client!.rg }, 'p-3 border-2 rounded-lg')}
+                            />
+                            {submitted && !client!.rg && (
+                                <small className="p-error">Preencha o RG.</small>
+                            )}
+                        </div>
                     </div>
-                </div>
-                <div className="field mb-3">
-                    <label htmlFor="dataNascimento">Date de Nascimento</label>
-                    <Calendar
+                    <div className="field mb-3">
+                        <label htmlFor="dataNascimento">Date de Nascimento</label>
+                        <Calendar
                             id="dataNascimento"
                             dateFormat='dd/mm/yy'
                             value={client!.dataNascimento as Date}
@@ -355,35 +355,37 @@ const Clients: React.FC = () => {
                             required
                             className={classNames({ "p-invalid": submitted && !client!.dataNascimento }, 'p-3 border-2 rounded-lg')}
                         />
-                    {submitted && !client!.dataNascimento && (
-                        <small className="p-error">Preencha a data de nascimento.</small>
-                    )}
-                </div>
-            </Dialog>
+                        {submitted && !client!.dataNascimento && (
+                            <small className="p-error">Preencha a data de nascimento.</small>
+                        )}
+                    </div>
+                </Dialog>
 
-            <Dialog
-                visible={invoicesDialog}
-                style={{ width: "80rem" }}
-                header="Faturas do cliente"
-                modal
-                className="p-fluid"
-                onHide={() => {
-                    setInvoicesDialog(false); 
-                }}
-            >
-                <InvoicesView client={client} />   
-            </Dialog>
+                <Dialog
+                    visible={invoicesDialog}
+                    style={{ width: "80rem" }}
+                    header="Faturas do cliente"
+                    modal
+                    className="p-fluid"
+                    onHide={() => {
+                        setInvoicesDialog(false);
+                    }}
+                >
+                    <InvoicesView client={client} />
+                </Dialog>
 
-            <Button
-                icon="pi pi-plus"
-                className="p-button-rounded p-button-success p-button-lg bg-blue-500 text-white fixed bottom-5 right-5"
-                onClick={() => {
-                    setClient(emptyClient);
-                    setSubmitted(false);
-                    setClientDialog(true);
-                }}
-            />
+                <Button
+                    icon="pi pi-plus"
+                    className="p-button-rounded p-button-success p-button-lg bg-blue-500 text-white fixed bottom-5 right-5"
+                    onClick={() => {
+                        setClient(emptyClient);
+                        setSubmitted(false);
+                        setClientDialog(true);
+                    }}
+                />
+            </div>
         </div>
+
     );
 };
 

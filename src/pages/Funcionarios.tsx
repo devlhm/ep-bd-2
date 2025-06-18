@@ -17,32 +17,24 @@ import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
 import { formatCPF, formatRg, getProfessionalTypeString, removeDotDash } from '../Helpers';
 import { Dropdown } from 'primereact/dropdown';
 import { InputMask } from 'primereact/inputmask';
+import { Funcionario } from '../@types/Funcionario';
+import Sidebar from '../components/Sidebar/Sidebar';
+import { Api } from '../hooks/api';
 
-interface Professional {
-    cpf: string,
-    rg: string,
-    nome: string,
-    tipo: number,
-    crm: string;
-    cnec: string;
-    registro: string;
-}
 
-const Professionals: React.FC = () => {
-    let emptyProfessional: Professional = {
-        cpf: '',
-        rg: '',
+const Funcionarios: React.FC = () => {
+    let emptyProfessional: Funcionario = {
         nome: '',
-        tipo: 0,
-        crm: '',
-        cnec: '',
-        registro: ''
+        cpf: '',
+        salario: 0,
+        senha: '',
+        id_cargo: 0,
     };
 
-    const [professionals, setProfessionals] = useState<Professional[]>([]);
+    const [professionals, setProfessionals] = useState<Funcionario[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [professional, setProfessional] = useState<Professional>(emptyProfessional);
+    const [professional, setProfessional] = useState<Funcionario>(emptyProfessional);
     const [deleteProfessionalDialog, setDeleteProfessionalDialog] = useState<boolean>(false);
     const [professionalDialog, setProfessionalDialog] = useState<boolean>(false);
     const [submitted, setSubmitted] = useState<boolean>(false);
@@ -52,17 +44,16 @@ const Professionals: React.FC = () => {
 
     const [filters, setFilters] = useState({
         cpf: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        rg: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        salario: { value: null, matchMode: FilterMatchMode.EQUALS },
         nome: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        tipo: { value: null, matchMode: FilterMatchMode.EQUALS },
         registro: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     });
 
     const fetchProfessionals = async () => {
         try {
-            const response = await axios.get<Professional[]>('http://localhost:5155/professional');
+            const response = await Api.fetchFunctionarios();
 
-            setProfessionals(response.data);
+            setProfessionals(response);
         } catch (error) {
             console.log(error);
             if (axios.isAxiosError(error) && error.response) {
@@ -88,12 +79,12 @@ const Professionals: React.FC = () => {
         return <ErrorMessage />;
     }
 
-    const confirmDeleteProfessional = (professional: Professional) => {
+    const confirmDeleteProfessional = (professional: Funcionario) => {
         setProfessional(professional);
         setDeleteProfessionalDialog(true);
     };
 
-    const actionBodyTemplate = (rowData: Professional) => {
+    const actionBodyTemplate = (rowData: Funcionario) => {
         return (
             <>
                 <Button
@@ -114,11 +105,10 @@ const Professionals: React.FC = () => {
         setSubmitted(true);
 
         var reqBody = { ...professional };
-        reqBody.cnec = professional.tipo == 0 ? '' : reqBody.registro;
-        reqBody.crm = professional.tipo == 1 ? '' : reqBody.registro;
+        // reqBody.cnec = professional.tipo == 0 ? '' : reqBody.registro;
+        // reqBody.crm = professional.tipo == 1 ? '' : reqBody.registro;
 
         reqBody.cpf = removeDotDash(reqBody.cpf);
-        reqBody.rg = removeDotDash(reqBody.rg);
 
         console.log(reqBody);
 
@@ -186,7 +176,7 @@ const Professionals: React.FC = () => {
         </>
     );
 
-    const editProfessional = (professional: Professional) => {
+    const editProfessional = (professional: Funcionario) => {
         setUpdate(true);
         setProfessional({ ...professional });
         setProfessionalDialog(true);
@@ -208,7 +198,7 @@ const Professionals: React.FC = () => {
         setProfessional(_professional);
     };
 
-    const deleteSupplier = (professional: Professional) => {
+    const deleteSupplier = (professional: Funcionario) => {
         setProfessionals(professionals.filter((val) => val.cpf !== professional.cpf));
         setDeleteProfessionalDialog(false);
         setProfessional(emptyProfessional);
@@ -226,10 +216,6 @@ const Professionals: React.FC = () => {
         }
     }
 
-    const typeBodyTemplate = (rowData: Professional) => {
-        return getProfessionalTypeString(rowData.tipo);
-    }
-
     const typeFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
         return <Dropdown
             value={options.value}
@@ -241,131 +227,86 @@ const Professionals: React.FC = () => {
         />
     }
 
-    const cpfBodyTemplate = (rowData: Professional) => {
+    const cpfBodyTemplate = (rowData: Funcionario) => {
         return formatCPF(rowData.cpf);
     }
 
-    const rgBodyTemplate = (rowData: Professional) => {
-        return formatRg(rowData.rg);
-    }
-
     return (
-        <div className='flex flex-col self-center justify-self-center w-full h-full bg-white'>
-            <Toast ref={toast} />
-            <DataTable sortField='data' className='w-full h-full' sortOrder={-1} dataKey='cpf' scrollable scrollHeight='100vh' filterDisplay='menu' filters={filters} value={professionals}>
-                <Column filter sortable field='nome' header='Nome' />
-                <Column filter sortable field='cpf' body={cpfBodyTemplate} header='CPF' />
-                <Column filter sortable field='rg' body={rgBodyTemplate} header='RG' />
-                <Column filter sortable field='registro' header='CRM/CNEC' />
-                <Column filter sortable field='tipo' filterElement={typeFilterTemplate} body={typeBodyTemplate} header='Tipo' />
-                <Column body={actionBodyTemplate} header="Ações" />
-            </DataTable>
+        <div className='w-full h-full grid justify-center' style={{ gridTemplateColumns: "250px 1fr" }}>
+            <Sidebar />
+            <div className='flex flex-col self-center justify-self-center w-full h-full bg-white'>
+                <Toast ref={toast} />
+                <DataTable sortField='data' className='w-full h-full' sortOrder={-1} dataKey='cpf' scrollable scrollHeight='100vh' filterDisplay='menu' filters={filters} value={professionals}>
+                    <Column filter sortable field='nome' header='Nome' />
+                    <Column filter sortable field='cpf' body={cpfBodyTemplate} header='CPF' />
+                    <Column body={actionBodyTemplate} header="Ações" />
+                </DataTable>
 
-            <DeleteConfirmationDialog
-                visible={deleteProfessionalDialog}
-                onHide={() => setDeleteProfessionalDialog(false)}
-                onConfirm={() => deleteSupplier(professional!)}
-                confirmationMessage="Você tem certeza que quer apagar esse profissional?"
-            />
+                <DeleteConfirmationDialog
+                    visible={deleteProfessionalDialog}
+                    onHide={() => setDeleteProfessionalDialog(false)}
+                    onConfirm={() => deleteSupplier(professional!)}
+                    confirmationMessage="Você tem certeza que quer apagar esse profissional?"
+                />
 
-            <Dialog
-                visible={professionalDialog}
-                style={{ width: "450px" }}
-                header="Detalhes do profissional"
-                modal
-                className="p-fluid"
-                footer={professionalDialogFooter}
-                onHide={() => {
-                    setUpdate(false);
-                    setProfessionalDialog(false);
-                }}
-            >
-                <div className="field mb-3">
-                    <label htmlFor="nome">Nome</label>
-                    <InputText
-                        id="nome"
-                        value={professional!.nome}
-                        onChange={(e) => onInputChange(e, "nome")}
-                        required
-                        className={classNames({ "p-invalid": submitted && !professional!.nome }, 'p-3 border-2 rounded-lg')}
-                    />
-                    {submitted && !professional!.nome && (
-                        <small className="p-error">Preencha o nome.</small>
-                    )}
-                </div>
-                <div className="field mb-3">
-                    <label htmlFor="tipo">Tipo</label>
-                    <Dropdown
-                        value={professional!.tipo}
-                        className={classNames({ "p-invalid": submitted && !professional!.tipo }, 'p-3 border-2 rounded-lg')}
-                        options={[
-                            { label: 'Dermatologista', value: 0 },
-                            { label: 'Esteticista', value: 1 },
-                        ]}
-                    />
-                    {submitted && !professional!.tipo && (
-                        <small className="p-error">Preencha o tipo.</small>
-                    )}
-                </div>
-                <div className="grid grid-cols-2 gap-x-3">
-
+                <Dialog
+                    visible={professionalDialog}
+                    style={{ width: "450px" }}
+                    header="Detalhes do profissional"
+                    modal
+                    className="p-fluid"
+                    footer={professionalDialogFooter}
+                    onHide={() => {
+                        setUpdate(false);
+                        setProfessionalDialog(false);
+                    }}
+                >
                     <div className="field mb-3">
-                        <label htmlFor="cpf">CPF</label>
-                        <InputMask
-                            id="cpf"
-                            value={professional!.cpf}
-                            mask='999.999.999-99'
-                            onChange={(e) => onInputChange(e, "cpf")}
-                            disabled={update}
+                        <label htmlFor="nome">Nome</label>
+                        <InputText
+                            id="nome"
+                            value={professional!.nome}
+                            onChange={(e) => onInputChange(e, "nome")}
                             required
-                            className={classNames({ "p-invalid": submitted && !professional!.cpf }, 'p-3 border-2 rounded-lg')}
+                            className={classNames({ "p-invalid": submitted && !professional!.nome }, 'p-3 border-2 rounded-lg')}
                         />
-                        {submitted && !professional!.cpf && (
-                            <small className="p-error">Preencha o CPF.</small>
+                        {submitted && !professional!.nome && (
+                            <small className="p-error">Preencha o nome.</small>
                         )}
                     </div>
-                    <div className="field mb-3">
-                        <label htmlFor="rg">RG</label>
-                        <InputMask
-                            id="rg"
-                            value={professional!.rg}
-                            onChange={(e) => onInputChange(e, "rg")}
-                            required
-                            mask="99.999.999-*"
-                            className={classNames({ "p-invalid": submitted && !professional!.rg }, 'p-3 border-2 rounded-lg')}
-                        />
-                        {submitted && !professional!.rg && (
-                            <small className="p-error">Preencha o RG.</small>
-                        )}
+                    <div className="grid grid-cols-2 gap-x-3">
+
+                        <div className="field mb-3">
+                            <label htmlFor="cpf">CPF</label>
+                            <InputMask
+                                id="cpf"
+                                value={professional!.cpf}
+                                mask='999.999.999-99'
+                                onChange={(e) => onInputChange(e, "cpf")}
+                                disabled={update}
+                                required
+                                className={classNames({ "p-invalid": submitted && !professional!.cpf }, 'p-3 border-2 rounded-lg')}
+                            />
+                            {submitted && !professional!.cpf && (
+                                <small className="p-error">Preencha o CPF.</small>
+                            )}
+                        </div>
                     </div>
-                </div>
-                <div className="field mb-3">
-                    <label htmlFor="registro">CRM/CNEC</label>
-                    <InputText
-                        value={professional!.registro}
-                        onChange={(e) => onInputChange(e, "registro")}
-                        required
-                        pattern='[0-9]+'
-                        className={classNames({ "p-invalid": submitted && !professional!.registro }, 'p-3 border-2 rounded-lg')}
-                    />
-                    {submitted && !professional!.registro && (
-                        <small className="p-error">Preencha o CRM/CNEC.</small>
-                    )}
-                </div>
+                </Dialog>
 
-            </Dialog>
-
-            <Button
-                icon="pi pi-plus"
-                className="p-button-rounded p-button-success p-button-lg bg-blue-500 text-white fixed bottom-5 right-5"
-                onClick={() => {
-                    setProfessional(emptyProfessional);
-                    setSubmitted(false);
-                    setProfessionalDialog(true);
-                }}
-            />
+                <Button
+                    icon="pi pi-plus"
+                    className="p-button-rounded p-button-success p-button-lg bg-blue-500 text-white fixed bottom-5 right-5"
+                    onClick={() => {
+                        setProfessional(emptyProfessional);
+                        setSubmitted(false);
+                        setProfessionalDialog(true);
+                    }}
+                />
+            </div>
         </div>
+
     );
 };
 
-export default Professionals;
+export default Funcionarios;

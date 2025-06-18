@@ -1,4 +1,5 @@
-import { Client } from '../@types/Client';
+import { Client } from '../@types/Cliente';
+import { Funcionario } from '../@types/Funcionario';
 import apiClient from '../Api/front/api'
 
 export const Api = {
@@ -24,10 +25,19 @@ export const Api = {
     },
     fetchClients: async (): Promise<Client[]> => {
         try {
-            const response = await apiClient.get('/clients');
+            const response = await apiClient.get('/clientes');
             return response.data;
         } catch (error) {
             console.error('Erro ao buscar clientes:', error);
+            throw error;
+        }
+    },
+    fetchFunctionarios: async (): Promise<Funcionario[]> => {
+        try {
+            const response = await apiClient.get('/funcionarios');
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao buscar funcionários:', error);
             throw error;
         }
     }

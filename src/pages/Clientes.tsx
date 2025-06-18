@@ -25,15 +25,19 @@ import { InputText } from 'primereact/inputtext';
 import InvoicesView from '../components/InvoicesView';
 import Sidebar from '../components/Sidebar/Sidebar';
 import { Api } from '../hooks/api';
-import { Client } from '../@types/Client';
+import { Client } from '../@types/Cliente';
 
 
-const Clients: React.FC = () => {
+const Clientes: React.FC = () => {
     let emptyClient: Client = {
         cpf: "",
-        rg: "",
         nome: "",
-        dataNascimento: null
+        dataNascimento: "",
+        aniversario: "",
+        email: "",
+        endereco: "",
+        telefone: "",
+        pontuacao: 0
     };
 
     const [clients, setClients] = useState<Client[]>([]);
@@ -146,7 +150,6 @@ const Clients: React.FC = () => {
         var reqBody = { ...client };
 
         reqBody.cpf = removeDotDash(reqBody.cpf);
-        reqBody.rg = removeDotDash(reqBody.rg);
 
         if (client!.nome.trim()) {
             if (update) {
@@ -263,10 +266,6 @@ const Clients: React.FC = () => {
         return formatCPF(rowData.cpf);
     }
 
-    const rgBodyTemplate = (rowData: Client) => {
-        return formatRg(rowData.rg);
-    }
-
     return (
         <div className='w-full h-full grid justify-center' style={{ gridTemplateColumns: "250px 1fr" }}>
             <Sidebar />
@@ -276,7 +275,6 @@ const Clients: React.FC = () => {
                 <DataTable sortField='data' className='w-full h-full' sortOrder={-1} dataKey='cpf' scrollable scrollHeight='100vh' filterDisplay='menu' filters={filters} value={clients}>
                     <Column filter sortable field='nome' header='Nome' />
                     <Column filter sortable field='cpf' body={cpfBodyTemplate} header='CPF' />
-                    <Column filter sortable field='rg' body={rgBodyTemplate} header='RG' />
                     <Column filter sortable field='dataNascimento' dataType="date" body={dateBodyTemplate} filterElement={dateFilterTemplate}
                         header='Data de Nasc.' />
                     <Column body={actionBodyTemplate} header="Ações" />
@@ -330,20 +328,6 @@ const Clients: React.FC = () => {
                                 <small className="p-error">Preencha o CPF.</small>
                             )}
                         </div>
-                        <div className="field mb-3 col-span-2">
-                            <label htmlFor="rg">RG</label>
-                            <InputMask
-                                id="rg"
-                                value={client!.rg}
-                                onChange={(e) => onInputNumberChange(e, "rg")}
-                                required
-                                mask='99.999.999-*'
-                                className={classNames({ "p-invalid": submitted && !client!.rg }, 'p-3 border-2 rounded-lg')}
-                            />
-                            {submitted && !client!.rg && (
-                                <small className="p-error">Preencha o RG.</small>
-                            )}
-                        </div>
                     </div>
                     <div className="field mb-3">
                         <label htmlFor="dataNascimento">Date de Nascimento</label>
@@ -389,4 +373,4 @@ const Clients: React.FC = () => {
     );
 };
 
-export default Clients;
+export default Clientes;

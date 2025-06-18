@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Client } from '../pages/Clients';
+import { Client } from '../pages/Clientes';
 import axios from 'axios';
 import moment from 'moment';
 import Loading from './Loading';
 import ErrorMessage from './ErrorMessage';
 import { getInvoiceStatus } from '../Helpers';
-import { Product } from '../pages/Products';
+import { Product } from '../pages/Produtos';
 import { Procedure } from '../pages/Procedures';
 import { classNames } from 'primereact/utils';
 
@@ -57,7 +57,7 @@ const InvoicesView: React.FC<InvoicesViewProps> = (props: InvoicesViewProps) => 
         }
     }
 
-    const closeInvoice = async(invoiceId: number) => {
+    const closeInvoice = async (invoiceId: number) => {
         try {
             await axios.put<Invoice>(`http://localhost:5155/invoice/updateStatus`, {
                 invoiceId: invoiceId,

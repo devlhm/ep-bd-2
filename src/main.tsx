@@ -3,18 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import {
   createBrowserRouter,
-  Route,
   RouterProvider,
 } from "react-router-dom";
-import Sidebar from './components/Sidebar/Sidebar.tsx';
 import App from './App.tsx';
-import Procedures from './pages/Procedures.tsx';
-import Clients from './pages/Clients.tsx';
-import Products from './pages/Products.tsx';
-import Suppliers from './pages/Suppliers.tsx';
-import Professionals from './pages/Professionals.tsx';
-import Billing from './pages/Billing.tsx';
+import Clientes from './pages/Clientes.tsx';
+import Produtos from './pages/Produtos.tsx';
 import Login from './pages/Login.tsx';
+import Dashboard from './pages/Dashboard.tsx';
+import Funcionarios from './pages/Funcionarios.tsx';
 
 const router = createBrowserRouter([
   {
@@ -26,28 +22,20 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: '/procedures',
-        element: <Procedures />,
+        path: '/dashboard',
+        element: <Dashboard />,
       },
       {
-        path: '/clients',
-        element: <Clients />,
+        path: '/clientes',
+        element: <Clientes />,
       },
       {
-        path: '/products',
-        element: <Products />,
+        path: '/produtos',
+        element: <Produtos />,
       },
       {
-        path: '/suppliers',
-        element: <Suppliers />
-      },
-      {
-        path: '/professionals',
-        element: <Professionals />
-      },
-      {
-        path: '/billing',
-        element: <Billing />
+        path: '/funcionarios',
+        element: <Funcionarios />
       }
     ],
   },

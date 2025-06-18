@@ -10,9 +10,8 @@
 }
 
 :root {
-  font-family: 'Inria Sans', Helvetica, Arial, sans-serif;
-  background-color: #faddf4;
-
+  font-family: "Inria Sans", Helvetica, Arial, sans-serif;
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -22,7 +21,7 @@
 li.selected {
   font-weight: 700;
   text-decoration-line: underline;
-  text-decoration-color: #BC0A75;
+  text-decoration-color: #bc0a75;
 }
 
 body {

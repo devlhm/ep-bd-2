@@ -89,10 +89,12 @@ const Produtos: React.FC = () => {
         sell.cpf = removeDotDash(sell.cpf);
         if (sell.cpf.trim()) {
             try {
-                await axios.post(`http://localhost:5155/product/sell`, {
-                    productId: product.idProduto,
-                    quantity: sell.quantity,
-                    cpf: sell.cpf
+                Api.registerVenda({
+                    cpfCliente: sell.cpf,
+                    itens: [{
+                        idProduto: product.idProduto,
+                        quantidadeComprada: sell.quantity
+                    }]
                 });
             } catch (error: any) {
                 console.log(error);
@@ -174,11 +176,12 @@ const Produtos: React.FC = () => {
         setSubmitted(true);
 
         var reqBody = { ...product };
+        console.log(reqBody);
 
         if (product!.nome.trim()) {
             if (product.idProduto) {
                 try {
-                    await axios.put(`http://localhost:5155/product/`, reqBody);
+                    Api.editProduto(product.idProduto.toString(), reqBody);
                 } catch (error: any) {
                     console.log(error)
                     toast.current!.show({
@@ -192,7 +195,7 @@ const Produtos: React.FC = () => {
             }
             else
                 try {
-                    await axios.post(`http://localhost:5155/product`, reqBody);
+                    Api.editProduto(product.idProduto.toString(), reqBody);
                 } catch (error: any) {
                     console.log(error);
                     toast.current!.show({
@@ -298,7 +301,7 @@ const Produtos: React.FC = () => {
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
         try {
-            axios.delete(`http://localhost:5155/product/${product.idProduto}`);
+            Api.deleteProduto(product.idProduto.toString());
         } catch (error: any) {
             throw new Error(error.message)
         } finally {

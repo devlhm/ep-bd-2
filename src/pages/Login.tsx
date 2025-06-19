@@ -28,7 +28,7 @@ const App: React.FC = () => {
             // Define as rotas baseadas no cargo do usuário
             const roleRoutes: { [key: string]: string } = {
                 gerente: '/clientes',
-                caixa: '/vendas',
+                caixa: '/produtos',
                 repositor: '/produtos',
             };
 

@@ -1,4 +1,4 @@
-export interface Venda {
+export interface ComprasType {
     id: number;
     cpf_cliente: string;
     valor_total: number;

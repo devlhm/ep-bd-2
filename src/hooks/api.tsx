@@ -1,6 +1,8 @@
 import { Client } from '../@types/Cliente';
+import { Compra } from '../@types/Compra';
 import { Funcionario } from '../@types/Funcionario';
 import { Produto } from '../@types/Produto';
+import { Venda } from '../@types/ComprasType';
 import apiClient from '../Api/front/api'
 
 export const Api = {
@@ -83,7 +85,24 @@ export const Api = {
             throw error;
         }
     },
-    fetchVendas: async (): Promise<any[]> => {
+    editProduto: async (id: string, produto: Produto): Promise<Produto> => {
+        try {
+            const response = await apiClient.put(`/produtos/${id}`, produto);
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao editar produto:', error);
+            throw error;
+        }
+    },
+    deleteProduto: async (id: string): Promise<void> => {
+        try {
+            await apiClient.delete(`/produtos/${id}`);
+        } catch (error) {
+            console.error('Erro ao deletar produto:', error);
+            throw error;
+        }
+    },
+    fetchVendas: async (): Promise<Venda[]> => {
         try {
             const response = await apiClient.get('/compras/1');
             return response.data;
@@ -92,4 +111,13 @@ export const Api = {
             throw error;
         }
     },
+    registerVenda: async (venda: Compra): Promise<any> => {
+        try {
+            const response = await apiClient.post('/compras', venda);
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao registrar venda:', error);
+            throw error;
+        }
+    }
 };

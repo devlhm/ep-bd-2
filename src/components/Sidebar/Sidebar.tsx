@@ -36,14 +36,17 @@ const Sidebar: React.FC = () => {
                     <SidebarLink to="/funcionarios" text="Funcionários" />
                     <SidebarLink to="/clientes" text="Clientes" />
                     <SidebarLink to="/produtos" text="Produtos" />
+                    <SidebarLink to="/compras" text="Compras" />
+
                 </>
             )}
 
             {/* Telas do Caixa */}
             {isCaixa && (
                 <>
-                    <SidebarLink to="/pdv" text="Ponto de Venda" />
-                    <SidebarLink to="/cadastro-cliente" text="Cliente" />
+                    <SidebarLink to="/produtos" text="Produtos" />
+                    <SidebarLink to="/clientes" text="Clientes" />
+                    <SidebarLink to="/compras" text="Compras" />
                 </>
             )}
 

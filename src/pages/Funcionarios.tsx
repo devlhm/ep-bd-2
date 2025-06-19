@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import axios from 'axios';
-import { Column, ColumnFilterElementTemplateOptions } from 'primereact/column';
+import { Column } from 'primereact/column';
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/lara-light-pink/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -14,8 +14,7 @@ import { classNames } from 'primereact/utils';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
-import { formatCPF, formatRg, getProfessionalTypeString, removeDotDash } from '../Helpers';
-import { Dropdown } from 'primereact/dropdown';
+import { formatCPF, removeDotDash } from '../Helpers';
 import { InputMask } from 'primereact/inputmask';
 import { Funcionario } from '../@types/Funcionario';
 import Sidebar from '../components/Sidebar/Sidebar';
@@ -105,8 +104,6 @@ const Funcionarios: React.FC = () => {
         setSubmitted(true);
 
         var reqBody = { ...professional };
-        // reqBody.cnec = professional.tipo == 0 ? '' : reqBody.registro;
-        // reqBody.crm = professional.tipo == 1 ? '' : reqBody.registro;
 
         reqBody.cpf = removeDotDash(reqBody.cpf);
 
@@ -115,7 +112,7 @@ const Funcionarios: React.FC = () => {
         if (professional!.nome.trim()) {
             if (update) {
                 try {
-                    await axios.put(`http://localhost:5155/professional/`, reqBody);
+                    Api.editFuncionario(professional.cpf, reqBody);
                     setUpdate(false);
                 } catch (error: any) {
                     console.log(error)
@@ -130,7 +127,7 @@ const Funcionarios: React.FC = () => {
             }
             else
                 try {
-                    await axios.post(`http://localhost:5155/professional`, reqBody);
+                    Api.editFuncionario(professional.cpf, reqBody);
                 } catch (error: any) {
                     console.log(error);
                     toast.current!.show({
@@ -190,20 +187,12 @@ const Funcionarios: React.FC = () => {
         setProfessional(_professional);
     };
 
-    const onInputNumberChange = (e: any, name: string) => {
-        const val = e.value || 0;
-        let _professional: any = { ...professional };
-        _professional[`${name}`] = val;
-
-        setProfessional(_professional);
-    };
-
     const deleteSupplier = (professional: Funcionario) => {
         setProfessionals(professionals.filter((val) => val.cpf !== professional.cpf));
         setDeleteProfessionalDialog(false);
         setProfessional(emptyProfessional);
         try {
-            axios.delete(`http://localhost:5155/professional/${professional.cpf}`);
+            Api.deleteFuncionario(professional.cpf);
         } catch (error: any) {
             throw new Error(error.message)
         } finally {
@@ -214,17 +203,6 @@ const Funcionarios: React.FC = () => {
                 life: 3000
             });
         }
-    }
-
-    const typeFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
-        return <Dropdown
-            value={options.value}
-            onChange={(e) => options.filterCallback(e.value, options.index)}
-            options={[
-                { label: 'Dermatologista', value: 0 },
-                { label: 'Esteticista', value: 1 },
-            ]}
-        />
     }
 
     const cpfBodyTemplate = (rowData: Funcionario) => {

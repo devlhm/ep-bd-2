@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Api } from '../hooks/api';
+import { jwtDecode } from "jwt-decode";
 
 const App: React.FC = () => {
     const [cpf, setCpf] = useState('');
@@ -16,12 +17,27 @@ const App: React.FC = () => {
     const handleLogin = () => {
         try {
             Api.login(cpf, senha)
-            navigate('/clients');
+            const token = localStorage.getItem('authToken');
+            const decodedToken = jwtDecode(token ? token : '') as { [key: string]: any };
+            // Exemplo de acesso ao cargo:
+            const userRole = decodedToken['[http://schemas.microsoft.com/ws/2008/06/identity/claims/role]'] || decodedToken['role'] || 'Usuário';
+            localStorage.setItem('cargo', userRole);
+
+
+            navigate('/clientes');
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             alert('Erro ao fazer login. Verifique suas credenciais e tente novamente.');
         }
     };
+
+    useEffect(() => {
+        // Verifica se o usuário já está logado
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            navigate('/clientes');
+        }
+    }, [navigate]);
 
     return (
         <div className="min-h-screen min-w-screen bg-gray-100 flex items-center justify-center">

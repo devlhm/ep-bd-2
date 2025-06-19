@@ -5,7 +5,6 @@ import apiClient from '../Api/front/api'
 
 export const Api = {
     login: async (cpf: string, senha: string) => {
-        console.log('Tentando fazer login com CPF:', cpf, 'e senha:', senha);
         try {
             const response = await apiClient.post('/auth/login', {
                 cpf,
@@ -14,7 +13,6 @@ export const Api = {
                 .then((res) => {
                     // Salvar o token no localStorage ou onde preferir
                     localStorage.setItem('authToken', res.data.token);
-                    console.log('Login bem-sucedido:', res.data);
                     return res;
                 });
             return response.data;

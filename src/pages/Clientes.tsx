@@ -26,6 +26,7 @@ import InvoicesView from '../components/InvoicesView';
 import Sidebar from '../components/Sidebar/Sidebar';
 import { Api } from '../hooks/api';
 import { Client } from '../@types/Cliente';
+import { useNavigate } from 'react-router-dom';
 
 
 const Clientes: React.FC = () => {
@@ -51,6 +52,9 @@ const Clientes: React.FC = () => {
     const [invoicesDialog, setInvoicesDialog] = useState<boolean>(false);
 
     const toast = useRef<Toast>(null);
+
+    const navigate = useNavigate();
+
 
     const [filters, setFilters] = useState({
         nome: { value: null, matchMode: FilterMatchMode.STARTS_WITH },

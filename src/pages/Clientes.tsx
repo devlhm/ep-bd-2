@@ -4,20 +4,16 @@ import { DataTable } from 'primereact/datatable';
 import axios from 'axios';
 import { Column, ColumnFilterElementTemplateOptions } from 'primereact/column';
 import "primeicons/primeicons.css";
-
-
 import "primereact/resources/themes/lara-light-pink/theme.css";
 import "primereact/resources/primereact.min.css";
-import { formatCPF, formatCurrency, formatRg, getProcedureNames, removeDotDash } from '../Helpers';
+import { formatCPF, removeDotDash } from '../Helpers';
 import { FilterMatchMode } from 'primereact/api';
 import moment from 'moment';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
-import { InputNumber } from 'primereact/inputnumber';
 import { InputMask } from 'primereact/inputmask';
 import { classNames } from 'primereact/utils';
-import { Dropdown } from 'primereact/dropdown';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import DeleteConfirmationDialog from '../components/DeleteConfirmationDialog';
@@ -54,7 +50,6 @@ const Clientes: React.FC = () => {
     const toast = useRef<Toast>(null);
 
     const navigate = useNavigate();
-
 
     const [filters, setFilters] = useState({
         nome: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -139,11 +134,11 @@ const Clientes: React.FC = () => {
                     className="p-button-rounded p-button-warning mr-2 bg-red-500 text-white"
                     onClick={() => confirmDeleteClient(rowData)}
                 />
-                <Button
+                {/* <Button
                     icon="pi pi-file"
                     className="p-button-rounded p-button-warning bg-yellow-500 text-white"
                     onClick={() => showInvoices(rowData)}
-                />
+                /> */}
             </>
         );
     };
@@ -155,10 +150,12 @@ const Clientes: React.FC = () => {
 
         reqBody.cpf = removeDotDash(reqBody.cpf);
 
+        console.log(reqBody);
+
         if (client!.nome.trim()) {
             if (update) {
                 try {
-                    await axios.put(`http://localhost:5155/client/`, reqBody);
+                    Api.editClient(client!.cpf, reqBody);
                     setUpdate(false);
                 } catch (error: any) {
                     console.log(error)
@@ -173,7 +170,7 @@ const Clientes: React.FC = () => {
             }
             else
                 try {
-                    await axios.post(`http://localhost:5155/client`, reqBody);
+                    Api.editClient(client!.cpf, reqBody);
                 } catch (error: any) {
                     console.log(error);
                     toast.current!.show({
@@ -240,20 +237,12 @@ const Clientes: React.FC = () => {
         setClient(_client);
     }
 
-    const onInputNumberChange = (e: any, name: string) => {
-        const val = e.value || 0;
-        let _client: any = { ...client };
-        _client[`${name}`] = val;
-
-        setClient(_client);
-    };
-
     const deleteClient = (client: Client) => {
         setClients(clients.filter((val) => val.cpf !== client.cpf));
         setDeleteClientDialog(false);
         setClient(emptyClient);
         try {
-            axios.delete(`http://localhost:5155/client/${client.cpf}`);
+            Api.deleteClient(client.cpf)
         } catch (error: any) {
             throw new Error(error.message)
         } finally {

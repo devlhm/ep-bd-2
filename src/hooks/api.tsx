@@ -31,6 +31,23 @@ export const Api = {
             throw error;
         }
     },
+    editClient: async (id: string, client: Client): Promise<Client> => {
+        try {
+            const response = await apiClient.put(`/clientes/${id}`, client);
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao editar cliente:', error);
+            throw error;
+        }
+    },
+    deleteClient: async (id: string): Promise<void> => {
+        try {
+            await apiClient.delete(`/clientes/${id}`);
+        } catch (error) {
+            console.error('Erro ao deletar cliente:', error);
+            throw error;
+        }
+    },
     fetchFuncionarios: async (): Promise<Funcionario[]> => {
         try {
             const response = await apiClient.get('/funcionarios');

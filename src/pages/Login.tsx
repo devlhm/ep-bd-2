@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Api } from '../hooks/api';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 const App: React.FC = () => {
     const [cpf, setCpf] = useState('');
@@ -17,14 +17,26 @@ const App: React.FC = () => {
     const handleLogin = () => {
         try {
             Api.login(cpf, senha)
+
             const token = localStorage.getItem('authToken');
             const decodedToken = jwtDecode(token ? token : '') as { [key: string]: any };
-            // Exemplo de acesso ao cargo:
-            const userRole = decodedToken['[http://schemas.microsoft.com/ws/2008/06/identity/claims/role]'] || decodedToken['role'] || 'Usuário';
-            localStorage.setItem('cargo', userRole);
+            const userRole =
+                decodedToken['[http://schemas.microsoft.com/ws/2008/06/identity/claims/role]'] ||
+                decodedToken['role'] ||
+                'Usuário';
 
+            // Define as rotas baseadas no cargo do usuário
+            const roleRoutes: { [key: string]: string } = {
+                gerente: '/clientes',
+                caixa: '/vendas',
+                repositor: '/produtos',
+            };
 
-            navigate('/clientes');
+            const route = roleRoutes[userRole.toLowerCase()];
+            if (route) {
+                navigate(route);
+            }
+
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             alert('Erro ao fazer login. Verifique suas credenciais e tente novamente.');

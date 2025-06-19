@@ -64,7 +64,7 @@ const Produtos: React.FC = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await Api.fetchProducts();
+            const response = await Api.fetchProdutos();
 
             const mapped = response.map((product) => {
                 product.status = getStatus(product.quantidadeEmEstoque);

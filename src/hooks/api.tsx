@@ -31,7 +31,7 @@ export const Api = {
             throw error;
         }
     },
-    fetchFunctionarios: async (): Promise<Funcionario[]> => {
+    fetchFuncionarios: async (): Promise<Funcionario[]> => {
         try {
             const response = await apiClient.get('/funcionarios');
             return response.data;
@@ -40,7 +40,7 @@ export const Api = {
             throw error;
         }
     },
-    fetchProducts: async (): Promise<Produto[]> => {
+    fetchProdutos: async (): Promise<Produto[]> => {
         try {
             const response = await apiClient.get('/produtos');
             return response.data;
@@ -48,5 +48,14 @@ export const Api = {
             console.error('Erro ao buscar produtos:', error);
             throw error;
         }
-    }
+    },
+    fetchVendas: async (): Promise<any[]> => {
+        try {
+            const response = await apiClient.get('/compras/1');
+            return response.data;
+        } catch (error) {
+            console.error('Erro ao buscar vendas:', error);
+            throw error;
+        }
+    },
 };

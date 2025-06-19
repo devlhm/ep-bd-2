@@ -51,7 +51,7 @@ const Funcionarios: React.FC = () => {
 
     const fetchProfessionals = async () => {
         try {
-            const response = await Api.fetchFunctionarios();
+            const response = await Api.fetchFuncionarios();
 
             setProfessionals(response);
         } catch (error) {

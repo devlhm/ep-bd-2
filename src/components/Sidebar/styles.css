@@ -2,7 +2,7 @@
 .sidebar {
   background-color: #2c2f36;
   margin-top: 0; /* pode remover se não precisar */
-  height: 100vh;
+  min-height: 100vh;
   padding-top: 2rem;
 }
 

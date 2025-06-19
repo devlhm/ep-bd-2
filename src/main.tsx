@@ -11,6 +11,7 @@ import Produtos from './pages/Produtos.tsx';
 import Login from './pages/Login.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import Funcionarios from './pages/Funcionarios.tsx';
+import Vendas from './pages/Vendas.tsx';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: '/funcionarios',
         element: <Funcionarios />
+      },
+      {
+        path: '/vendas',
+        element: <Vendas />
       }
     ],
   },

@@ -4,6 +4,7 @@
   margin-top: 0; /* pode remover se não precisar */
   min-height: 100vh;
   padding-top: 2rem;
+  font-family: "Inria Sans", Helvetica, Arial, sans-serif;
 }
 
 .sidebar li {
@@ -32,6 +33,7 @@
 .sidebar a.active {
   background-color: #0d6efd;
   color: white;
+  font-weight: bold;
 }
 
 .sidebar a:hover {

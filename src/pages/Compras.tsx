@@ -12,20 +12,47 @@ import { classNames } from 'primereact/utils';
 import { ComprasType } from '../@types/ComprasType';
 
 const Compras = () => {
-    const [compras, setCompras] = useState<ComprasType[]>([]);
+    const [compra, setCompra] = useState<ComprasType>({ id: 0, cpf_cliente: '', valor_total: 0, data: '' });
     const [compraDialog, setCompraDialog] = useState(false);
     const [deleteCompraDialog, setDeleteCompraDialog] = useState(false);
-    const [compra, setCompra] = useState<ComprasType>({ id: 0, cpf_cliente: '', valor_total: 0, data: '' });
+    const [compras, setCompras] = useState<ComprasType[]>([
+        {
+            id: 1,
+            cpf_cliente: '123.456.789-00',
+            valor_total: 199.90,
+            data: '10/06/2025'
+        },
+        {
+            id: 2,
+            cpf_cliente: '987.654.321-00',
+            valor_total: 89.50,
+            data: '12/06/2025'
+        },
+        {
+            id: 3,
+            cpf_cliente: '111.222.333-44',
+            valor_total: 450.00,
+            data: '15/06/2025'
+        },
+        {
+            id: 4,
+            cpf_cliente: '555.666.777-88',
+            valor_total: 123.45,
+            data: '18/06/2025'
+        }
+    ]);
+    const emptyCompra: ComprasType = { id: 0, cpf_cliente: '', valor_total: 0, data: '' };
+
+
     const [submitted, setSubmitted] = useState(false);
     const [update, setUpdate] = useState(false);
     const [filters, setFilters] = useState({});
     const toast = useRef<Toast>(null);
 
-    const emptyCompra: ComprasType = { id: 0, cpf_cliente: '', valor_total: 0, data: '' };
 
     const onInputChange = (e: InputMaskChangeEvent | React.ChangeEvent<HTMLInputElement>, name: string) => {
         const val = e.target.value;
-        setCompra({ ...compra, [name]: val });
+        setCompras({ ...compras, [name]: val });
     };
 
     const deleteCompra = (compraToDelete: ComprasType) => {
@@ -48,6 +75,7 @@ const Compras = () => {
                     if (!update) {
                         setCompras(prev => [...prev, { ...compra, id_compra: Date.now().toString() }]);
                     }
+                    const emptyCompra = { id: 0, cpf_cliente: '', valor_total: 0, data: '' };
                     setCompraDialog(false);
                     setCompra(emptyCompra);
                     setSubmitted(false);
@@ -61,6 +89,31 @@ const Compras = () => {
         </div>
     );
 
+    const actionBodyTemplate = (rowData: ComprasType[]) => {
+        return (
+            <>
+                <Button
+                    icon="pi pi-pencil"
+                    className="p-button-rounded p-button-success mr-2 bg-green-500 text-white"
+                    onClick={() => {
+                        setCompras(rowData);
+                        setUpdate(true);
+                        setCompraDialog(true);
+                    }}
+                />
+                <Button
+                    icon="pi pi-trash"
+                    className="p-button-rounded p-button-warning bg-red-500 text-white"
+                    onClick={() => {
+                        setCompras(rowData);
+                        setDeleteCompraDialog(true);
+                    }}
+                />
+
+            </>
+        );
+    };
+
     return (
         <div className='w-full h-full grid justify-center' style={{ gridTemplateColumns: "250px 1fr" }}>
             <Sidebar />
@@ -70,33 +123,20 @@ const Compras = () => {
                     sortField='data'
                     className='w-full h-full'
                     sortOrder={-1}
-                    dataKey='id_compra'
+                    dataKey='id'
                     scrollable
                     scrollHeight='100vh'
                     filterDisplay='menu'
                     filters={filters}
                     value={compras}
                 >
-                    <Column field='id_compra' header='ID da Compra' sortable />
+                    <Column field='id' header='ID da Compra' sortable />
                     <Column field='cpf_cliente' header='CPF do Cliente' sortable />
                     <Column field='valor_total' header='Valor Total' sortable body={(rowData) => `R$ ${parseFloat(rowData.valor_total).toFixed(2)}`} />
                     <Column field='data' header='Data' sortable />
-                    <Column
-                        header="Ações"
-                        body={(rowData) => (
-                            <div className='flex gap-2'>
-                                <Button icon="pi pi-pencil" className="p-button-rounded p-button-info" onClick={() => {
-                                    setCompra(rowData);
-                                    setUpdate(true);
-                                    setCompraDialog(true);
-                                }} />
-                                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => {
-                                    setCompra(rowData);
-                                    setDeleteCompraDialog(true);
-                                }} />
-                            </div>
-                        )}
-                    />
+                    <Column body={actionBodyTemplate} header="Ações" />
+
+
                 </DataTable>
 
                 <DeleteConfirmationDialog

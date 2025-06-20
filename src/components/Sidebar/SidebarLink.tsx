@@ -15,8 +15,8 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({ to, text }) => {
             <Link
                 to={to}
                 className={
-                    (isActive ? 'selected ' : '') +
-                    'block w-full px-4 py-2 rounded-md transition hover:scale-105'
+                    `block w-full px-4 py-2 rounded-md transition hover:bg-blue-700 hover:scale-105 text-white ${isActive ? 'active' : ''
+                    }`
                 }
             >
                 {text}

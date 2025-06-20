@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Api } from '../hooks/api';
 import { jwtDecode } from 'jwt-decode';
+import olhoAberto from '../assets/olho_aberto.png';
+import olhoFechado from '../assets/olho_fechado.png';
+import logo from '../assets/supermecado_logo.png';
 
 const App: React.FC = () => {
     const [cpf, setCpf] = useState('');
@@ -54,13 +57,12 @@ const App: React.FC = () => {
     return (
         <div className="min-h-screen min-w-screen bg-gray-100 flex items-center justify-center">
             <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
-                <div className="text-center mb-6">
+                <div className="text-center mb-6 flex flex-col items-center">
                     <img
-                        src="https://via.placeholder.com/50"
-                        alt="Logo do Supermercado"
-                        className="mx-auto mb-2"
+                        src={logo}
+                        alt={"Logo do Supermercado"}
+                        className="w-52 h-52"
                     />
-                    <p className="text-gray-700 font-medium">Logo do Supermercado</p>
                 </div>
 
                 <h2 className="text-xl font-bold text-center text-blue-600 mb-6">Login</h2>
@@ -96,7 +98,11 @@ const App: React.FC = () => {
                         onClick={toggleMostrarSenha}
                         className="absolute right-2 top-9 text-gray-500 focus:outline-none"
                     >
-                        {mostrarSenha ? '🙈' : '👁️'}
+                        <img
+                            src={mostrarSenha ? olhoAberto : olhoFechado}
+                            alt={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+                            className="w-5 h-5"
+                        />
                     </button>
                 </div>
 

@@ -1,25 +1,44 @@
-# BeautySoft
+## Baixando dependencias
 
-Um sistema de gestão para clínicas de estética, incluindo gerenciamento de faturas, agendamentos, clientes e profissionais.
+Para instalar as dependencias, use:
+
+```sh
+npm install
+```
+
+(caso o [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) não esteja instalado na maquina, será necessário baixa-lo na internet)
 
 ## Executando os Scripts
 
 Para executar o servidor de desenvolvimento para a API, use:
+
 ```sh
-npm run dev-api
+  1. Instale o .NET SDK (versão 9 ou superior).
+  2. Configure o banco de dados: Certifique-se de ter o PostgreSQL instalado e rodando.
+  3. Configure os segredos:
+    No projeto Api.Presentation , encontre o arquivo appsettings.Development.json .
+    Atualize a ConnectionStrings para apontar para o seu banco de dados local.
+  4. Execute a API:
+    Abra um terminal na pasta do projeto Api.Presentation .
+    (para ir para a pasta basta utilizar o comando "cd src/Api/Api.Presentation" ou o equivalente no linux)
+    Execute o comando "dotnet run" .
+    A API estará rodando, geralmente em https://localhost:7165 . Verifique o terminal para a URL exata. A API já criará o banco de dados e os usuários de teste para você na primeira execução.
 ```
 
-Para executar o servidor de desenvolvimento para o frontend, use:
+Para executar o servidor de desenvolvimento para o frontend, use o seguinte comando na pasta raiz:
+
 ```sh
 npm run dev
 ```
 
 Para construir o projeto, use:
+
 ```sh
 npm run build
 ```
 
 Para visualizar o projeto construído, use:
+
 ```sh
 npm run preview
 ```
@@ -39,17 +58,17 @@ Se você está desenvolvendo uma aplicação de produção, recomendamos atualiz
 
 1. Configure a propriedade `parserOptions` no nível superior assim:
 
-  ```js
-  export default tseslint.config({
-    languageOptions: {
+```js
+export default tseslint.config({
+  languageOptions: {
     // outras opções...
     parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
       tsconfigRootDir: import.meta.dirname,
     },
-    },
-  })
-  ```
+  },
+});
+```
 
 2. Substitua `tseslint.configs.recommended` por `tseslint.configs.recommendedTypeChecked` ou `tseslint.configs.strictTypeChecked`.
 
@@ -57,22 +76,22 @@ Se você está desenvolvendo uma aplicação de produção, recomendamos atualiz
 
 4. Instale [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) e atualize a configuração:
 
-  ```js
-  // eslint.config.js
-  import react from 'eslint-plugin-react'
+```js
+// eslint.config.js
+import react from "eslint-plugin-react";
 
-  export default tseslint.config({
-    // Defina a versão do react
-    settings: { react: { version: '18.3' } },
-    plugins: {
+export default tseslint.config({
+  // Defina a versão do react
+  settings: { react: { version: "18.3" } },
+  plugins: {
     // Adicione o plugin react
     react,
-    },
-    rules: {
+  },
+  rules: {
     // outras regras...
     // Habilite suas regras recomendadas
     ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-    },
-  })
-  ```
+    ...react.configs["jsx-runtime"].rules,
+  },
+});
+```

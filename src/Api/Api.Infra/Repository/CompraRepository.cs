@@ -17,6 +17,7 @@ namespace Api.Infra.Repository
         public async Task<int> CreateAsync(Compra compra)
         {
             // Toda a operação é envolvida em uma transação
+            if (_connection.State == ConnectionState.Closed) { _connection.Open(); }
             using IDbTransaction? transaction = _connection.BeginTransaction();
             try
             {

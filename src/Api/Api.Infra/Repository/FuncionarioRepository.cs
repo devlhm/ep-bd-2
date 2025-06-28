@@ -18,6 +18,7 @@ namespace Api.Infra.Repository
         // pois envolve inserir em 'pessoa' e depois em 'funcionario'.
         public async Task CreateAsync(Funcionario funcionario)
         {
+            if (_connection.State == ConnectionState.Closed) { _connection.Open(); }
             using IDbTransaction? transaction = _connection.BeginTransaction();
             try
             {
@@ -81,6 +82,7 @@ namespace Api.Infra.Repository
 
         public async Task<bool> UpdateAsync(Funcionario funcionario)
         {
+            if (_connection.State == ConnectionState.Closed) { _connection.Open(); }
             using IDbTransaction? transaction = _connection.BeginTransaction();
             try
             {

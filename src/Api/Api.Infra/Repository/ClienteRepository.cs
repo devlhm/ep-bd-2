@@ -76,7 +76,8 @@ namespace Api.Infra.Repository
 
         public async Task<bool> UpdateAsync(Cliente cliente)
         {
-             using IDbTransaction? transaction = _connection.BeginTransaction();
+            if (_connection.State == ConnectionState.Closed) { _connection.Open(); }
+            using IDbTransaction? transaction = _connection.BeginTransaction();
             try
             {
                 var pessoaSql = @"
